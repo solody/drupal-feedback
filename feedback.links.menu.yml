@@ -1,0 +1,14 @@
+
+# Feedback menu items definition
+entity.feedback.collection:
+  title: 'Feedback list'
+  route_name: entity.feedback.collection
+  description: 'List Feedback entities'
+  parent: system.admin_structure
+  weight: 100
+
+feedback.admin.structure.settings:
+  title: 'Feedback settings'
+  description: 'Configure Feedback entities'
+  route_name: feedback.settings
+  parent: system.admin_structure

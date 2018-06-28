@@ -1,0 +1,21 @@
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - basic_auth
+    - feedback
+    - serialization
+    - simple_oauth
+    - user
+id: feedback_make_feedback
+plugin_id: feedback_make_feedback
+granularity: resource
+configuration:
+  methods:
+    - POST
+  formats:
+    - json
+  authentication:
+    - basic_auth
+    - oauth2
+    - cookie
