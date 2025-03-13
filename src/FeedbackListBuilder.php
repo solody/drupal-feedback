@@ -18,7 +18,7 @@ class FeedbackListBuilder extends EntityListBuilder {
    */
   public function buildHeader() {
     $header['id'] = $this->t('Feedback ID');
-    $header['name'] = $this->t('Name');
+    $header['title'] = $this->t('Title');
     return $header + parent::buildHeader();
   }
 
@@ -28,9 +28,9 @@ class FeedbackListBuilder extends EntityListBuilder {
   public function buildRow(EntityInterface $entity) {
     /** @var \Drupal\feedback\Entity\Feedback $entity */
     $row['id'] = $entity->id();
-    $row['name'] = Link::createFromRoute(
-      $entity->label(),
-      'entity.feedback.edit_form',
+    $row['title'] = Link::createFromRoute(
+      $entity->label() ?? $entity->id(),
+      'entity.feedback.canonical',
       ['feedback' => $entity->id()]
     );
     return $row + parent::buildRow($entity);

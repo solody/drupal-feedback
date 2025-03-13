@@ -58,6 +58,10 @@ class Feedback extends ContentEntityBase implements FeedbackInterface {
 
   use EntityChangedTrait;
 
+  public function label() {
+    return parent::label() ?? '';
+  }
+
   /**
    * {@inheritdoc}
    */
@@ -147,6 +151,7 @@ class Feedback extends ContentEntityBase implements FeedbackInterface {
         'label' => 'inline',
         'type' => 'author',
       ])
+      ->setDisplayConfigurable('view', TRUE)
       ->setDisplayOptions('form', [
         'type' => 'entity_reference_autocomplete',
         'settings' => [
@@ -155,7 +160,8 @@ class Feedback extends ContentEntityBase implements FeedbackInterface {
           'autocomplete_type' => 'tags',
           'placeholder' => '',
         ],
-      ]);
+      ])
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['title'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Title'))
@@ -164,9 +170,11 @@ class Feedback extends ContentEntityBase implements FeedbackInterface {
         'label' => 'inline',
         'type' => 'string',
       ])
+      ->setDisplayConfigurable('view', TRUE)
       ->setDisplayOptions('form', [
         'type' => 'string_textfield',
-      ]);
+      ])
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['content'] = BaseFieldDefinition::create('string_long')
       ->setLabel(t('Content'))
@@ -179,9 +187,11 @@ class Feedback extends ContentEntityBase implements FeedbackInterface {
         'label' => 'above',
         'type' => 'string',
       ])
+      ->setDisplayConfigurable('view', TRUE)
       ->setDisplayOptions('form', [
         'type' => 'string_textarea',
-      ]);
+      ])
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['images'] = BaseFieldDefinition::create('image')
       ->setLabel(t('Images'))
@@ -203,22 +213,44 @@ class Feedback extends ContentEntityBase implements FeedbackInterface {
         'label' => 'above',
         'type' => 'image',
       ])
+      ->setDisplayConfigurable('view', TRUE)
       ->setDisplayOptions('form', [
         'type' => 'image_image',
-      ]);
+      ])
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['resolved'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Resolve'))
+      ->setLabel(t('Resolved'))
       ->setDefaultValue(FALSE)
+      ->setSettings([
+        'on_label' => t('Resolved'),
+        'off_label' => t('Not resolved'),
+      ])
       ->setDisplayOptions('form', [
         'type' => 'boolean_checkbox',
-      ]);
+        'settings' => [
+          'display_label' => TRUE,
+        ],
+        'weight' => 10,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayOptions('view', [
+        'type' => 'boolean',
+        'label' => 'above',
+        'weight' => 0,
+        'settings' => [
+          'format' => 'enabled-disabled',
+        ],
+      ])
+      ->setDisplayConfigurable('view', TRUE);
 
     $fields['created'] = BaseFieldDefinition::create('created')
-      ->setLabel(t('Created'));
+      ->setLabel(t('Created'))
+      ->setDescription(t('The time that the evidence was created.'));
 
     $fields['changed'] = BaseFieldDefinition::create('changed')
-      ->setLabel(t('Changed'));
+      ->setLabel(t('Changed'))
+      ->setDescription(t('The time that the feedback was last edited.'));
 
     return $fields;
   }

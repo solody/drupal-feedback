@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * @file
+ * Contains feedback.install.
+ */
+
+use Drupal\user\RoleInterface;
+
+/**
+ * Implements hook_install().
+ */
+function feedback_install() {
+  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, [
+    'add feedback entities',
+    'edit feedback entities',
+    'view feedback entities',
+    'restful post feedback_make_feedback'
+  ]);
+}

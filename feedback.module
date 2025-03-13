@@ -7,6 +7,7 @@
 
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\user\RoleInterface;
+use Drupal\Core\Render\Element;
 
 /**
  * Implements hook_help().
@@ -30,19 +31,27 @@ function feedback_help($route_name, RouteMatchInterface $route_match) {
 function feedback_theme() {
   return [
     'feedback' => [
-      'render element' => 'children',
+      'render element' => 'elements',
     ],
   ];
 }
 
 /**
- * Implements hook_install().
+ * Prepares variables for Feedback templates.
+ *
+ * Default template: feedback.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the user information and any
+ *   - attributes: HTML attributes for the containing element.
  */
-function feedback_install()
-{
-    // 为已认证用户添加权限
-    user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, [
-        'add feedback entities',
-        'restful post feedback_make_feedback'
-    ]);
+function template_preprocess_feedback(array &$variables) {
+  // Fetch Feedback Entity Object.
+  $feedback = $variables['elements']['#feedback'];
+
+  $variables['view_mode'] = $variables['elements']['#view_mode'];
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
 }
