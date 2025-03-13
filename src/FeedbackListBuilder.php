@@ -13,7 +13,6 @@ use Drupal\Core\Link;
  */
 class FeedbackListBuilder extends EntityListBuilder {
 
-
   /**
    * {@inheritdoc}
    */
@@ -27,7 +26,7 @@ class FeedbackListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /* @var $entity \Drupal\feedback\Entity\Feedback */
+    /** @var \Drupal\feedback\Entity\Feedback $entity */
     $row['id'] = $entity->id();
     $row['name'] = Link::createFromRoute(
       $entity->label(),

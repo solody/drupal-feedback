@@ -16,7 +16,7 @@ class FeedbackForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    /* @var $entity \Drupal\feedback\Entity\Feedback */
+    /** @var \Drupal\feedback\Entity\Feedback $entity */
     $form = parent::buildForm($form, $form_state);
 
     $entity = $this->entity;
@@ -34,13 +34,13 @@ class FeedbackForm extends ContentEntityForm {
 
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Created the %label Feedback.', [
+        $this->messenger->addMessage($this->t('Created the %label Feedback.', [
           '%label' => $entity->label(),
         ]));
         break;
 
       default:
-        drupal_set_message($this->t('Saved the %label Feedback.', [
+        $this->messenger->addMessage($this->t('Saved the %label Feedback.', [
           '%label' => $entity->label(),
         ]));
     }

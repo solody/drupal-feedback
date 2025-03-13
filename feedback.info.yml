@@ -1,12 +1,10 @@
 name: Feedback
 type: module
-description: 'My Awesome Module'
+description: 'Provides feedback functionality.'
 core_version_requirement: ^10 || ^11
 package: Custom
 dependencies:
   - basic_auth
-  - contact
-  - feedback
   - rest
   - serialization
   - simple_oauth

@@ -7,6 +7,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -53,192 +54,173 @@ use Drupal\user\UserInterface;
  *   field_ui_base_route = "feedback.settings"
  * )
  */
-class Feedback extends ContentEntityBase implements FeedbackInterface
-{
-    use EntityChangedTrait;
+class Feedback extends ContentEntityBase implements FeedbackInterface {
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function preCreate(EntityStorageInterface $storage_controller, array &$values)
-    {
-        parent::preCreate($storage_controller, $values);
-    }
+  use EntityChangedTrait;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTitle()
-    {
-        return $this->get('title')->value;
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function getTitle(): string {
+    return $this->get('title')->value;
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setTitle($title)
-    {
-        $this->set('title', $title);
-        return $this;
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function setTitle(string $title): FeedbackInterface {
+    $this->set('title', $title);
+    return $this;
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCreatedTime()
-    {
-        return $this->get('created')->value;
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function getCreatedTime(): int {
+    return $this->get('created')->value;
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setCreatedTime($timestamp)
-    {
-        $this->set('created', $timestamp);
-        return $this;
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function setCreatedTime(int $timestamp): FeedbackInterface {
+    $this->set('created', $timestamp);
+    return $this;
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOwner()
-    {
-        return $this->get('user_id')->entity;
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function getOwner() {
+    return $this->get('user_id')->entity;
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOwnerId()
-    {
-        return $this->get('user_id')->target_id;
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function getOwnerId() {
+    return $this->get('user_id')->target_id;
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setOwnerId($uid)
-    {
-        $this->set('user_id', $uid);
-        return $this;
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function setOwnerId($uid) {
+    $this->set('user_id', $uid);
+    return $this;
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setOwner(UserInterface $account)
-    {
-        $this->set('user_id', $account->id());
-        return $this;
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function setOwner(UserInterface $account) {
+    $this->set('user_id', $account->id());
+    return $this;
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isHandled()
-    {
-        return (bool)$this->getEntityKey('status');
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function isResolved(): bool {
+    return (bool) $this->getEntityKey('resolve');
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setHandled($handled)
-    {
-        $this->set('status', $handled ? TRUE : FALSE);
-        return $this;
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function setResolved(bool $handled): FeedbackInterface {
+    $this->set('resolve', $handled);
+    return $this;
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function baseFieldDefinitions(EntityTypeInterface $entity_type)
-    {
-        $fields = parent::baseFieldDefinitions($entity_type);
+  /**
+   * {@inheritdoc}
+   */
+  public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+    $fields = parent::baseFieldDefinitions($entity_type);
 
-        $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
-            ->setLabel(t('反馈用户'))
-            ->setSetting('target_type', 'user')
-            ->setSetting('handler', 'default')
-            ->setDisplayOptions('view', [
-                'label' => 'inline',
-                'type' => 'author'
-            ])
-            ->setDisplayOptions('form', [
-                'type' => 'entity_reference_autocomplete',
-                'settings' => [
-                    'match_operator' => 'CONTAINS',
-                    'size' => '60',
-                    'autocomplete_type' => 'tags',
-                    'placeholder' => '',
-                ],
-            ]);
+    $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Reporter'))
+      ->setSetting('target_type', 'user')
+      ->setSetting('handler', 'default')
+      ->setDisplayOptions('view', [
+        'label' => 'inline',
+        'type' => 'author',
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'entity_reference_autocomplete',
+        'settings' => [
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'autocomplete_type' => 'tags',
+          'placeholder' => '',
+        ],
+      ]);
 
-        $fields['title'] = BaseFieldDefinition::create('string')
-            ->setLabel(t('标题'))
-            ->setDefaultValue('')
-            ->setDisplayOptions('view', [
-                'label' => 'inline',
-                'type' => 'string'
-            ])
-            ->setDisplayOptions('form', [
-                'type' => 'string_textfield'
-            ]);
+    $fields['title'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Title'))
+      ->setDefaultValue('')
+      ->setDisplayOptions('view', [
+        'label' => 'inline',
+        'type' => 'string',
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'string_textfield',
+      ]);
 
-        $fields['content'] = BaseFieldDefinition::create('string_long')
-            ->setLabel(t('内容'))
-            ->setSettings([
-                'max_length' => 500,
-                'text_processing' => 0,
-            ])
-            ->setDefaultValue('')
-            ->setDisplayOptions('view', [
-                'label' => 'above',
-                'type' => 'string'
-            ])
-            ->setDisplayOptions('form', [
-                'type' => 'string_textarea'
-            ]);
+    $fields['content'] = BaseFieldDefinition::create('string_long')
+      ->setLabel(t('Content'))
+      ->setSettings([
+        'max_length' => 500,
+        'text_processing' => 0,
+      ])
+      ->setDefaultValue('')
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'string',
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'string_textarea',
+      ]);
 
-        $fields['images'] = BaseFieldDefinition::create('image')
-            ->setLabel(t('图片'))
-            ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
-            ->setSettings([
-                'file_directory' => 'feedback/feedback/images/[date:custom:Y]-[date:custom:m]',
-                'file_extensions' => 'png gif jpg jpeg',
-                'max_filesize' => '5 MB',
-                'max_resolution' => '',
-                'min_resolution' => '',
-                'alt_field' => false,
-                'alt_field_required' => true,
-                'title_field' => false,
-                'title_field_required' => false,
-                'handler' => 'default:file',
-                'handler_settings' => []
-            ])
-            ->setDisplayOptions('view', [
-                'label' => 'above',
-                'type' => 'image'
-            ])
-            ->setDisplayOptions('form', [
-                'type' => 'image_image'
-            ]);
+    $fields['images'] = BaseFieldDefinition::create('image')
+      ->setLabel(t('Images'))
+      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+      ->setSettings([
+        'file_directory' => 'feedback/feedback/images/[date:custom:Y]-[date:custom:m]',
+        'file_extensions' => 'png gif jpg jpeg',
+        'max_filesize' => '5 MB',
+        'max_resolution' => '',
+        'min_resolution' => '',
+        'alt_field' => FALSE,
+        'alt_field_required' => TRUE,
+        'title_field' => FALSE,
+        'title_field_required' => FALSE,
+        'handler' => 'default:file',
+        'handler_settings' => [],
+      ])
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'image',
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'image_image',
+      ]);
 
-        $fields['status'] = BaseFieldDefinition::create('boolean')
-            ->setLabel(t('已处理'))
-            ->setDefaultValue(false)
-            ->setDisplayOptions('form', [
-                'type' => 'boolean_checkbox',
-            ]);
+    $fields['resolved'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(t('Resolve'))
+      ->setDefaultValue(FALSE)
+      ->setDisplayOptions('form', [
+        'type' => 'boolean_checkbox',
+      ]);
 
-        $fields['created'] = BaseFieldDefinition::create('created')
-            ->setLabel(t('Created'));
+    $fields['created'] = BaseFieldDefinition::create('created')
+      ->setLabel(t('Created'));
 
-        $fields['changed'] = BaseFieldDefinition::create('changed')
-            ->setLabel(t('Changed'));
+    $fields['changed'] = BaseFieldDefinition::create('changed')
+      ->setLabel(t('Changed'));
 
-        return $fields;
-    }
+    return $fields;
+  }
 
 }

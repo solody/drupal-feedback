@@ -13,15 +13,13 @@ use Drupal\user\EntityOwnerInterface;
  */
 interface FeedbackInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
 
-  // Add get/set methods for your configuration properties here.
-
   /**
    * Gets the Feedback title.
    *
    * @return string
    *   Title of the Feedback.
    */
-  public function getTitle();
+  public function getTitle(): string;
 
   /**
    * Sets the Feedback title.
@@ -32,7 +30,7 @@ interface FeedbackInterface extends ContentEntityInterface, EntityChangedInterfa
    * @return \Drupal\feedback\Entity\FeedbackInterface
    *   The called Feedback entity.
    */
-  public function setTitle($title);
+  public function setTitle(string $title): FeedbackInterface;
 
   /**
    * Gets the Feedback creation timestamp.
@@ -40,7 +38,7 @@ interface FeedbackInterface extends ContentEntityInterface, EntityChangedInterfa
    * @return int
    *   Creation timestamp of the Feedback.
    */
-  public function getCreatedTime();
+  public function getCreatedTime(): int;
 
   /**
    * Sets the Feedback creation timestamp.
@@ -51,7 +49,7 @@ interface FeedbackInterface extends ContentEntityInterface, EntityChangedInterfa
    * @return \Drupal\feedback\Entity\FeedbackInterface
    *   The called Feedback entity.
    */
-  public function setCreatedTime($timestamp);
+  public function setCreatedTime(int $timestamp): FeedbackInterface;
 
   /**
    * Returns the Feedback handled status indicator.
@@ -61,7 +59,7 @@ interface FeedbackInterface extends ContentEntityInterface, EntityChangedInterfa
    * @return bool
    *   TRUE if the Feedback is handled.
    */
-  public function isHandled();
+  public function isResolved(): bool;
 
   /**
    * Sets the handled status of a Feedback.
@@ -72,6 +70,6 @@ interface FeedbackInterface extends ContentEntityInterface, EntityChangedInterfa
    * @return \Drupal\feedback\Entity\FeedbackInterface
    *   The called Feedback entity.
    */
-  public function setHandled($handled);
+  public function setResolved(bool $handled): FeedbackInterface;
 
 }

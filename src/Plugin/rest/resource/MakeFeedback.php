@@ -6,7 +6,6 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\feedback\Entity\Feedback;
 use Drupal\rest\ModifiedResourceResponse;
 use Drupal\rest\Plugin\ResourceBase;
-use Drupal\rest\ResourceResponse;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -54,7 +53,8 @@ class MakeFeedback extends ResourceBase {
     $plugin_definition,
     array $serializer_formats,
     LoggerInterface $logger,
-    AccountProxyInterface $current_user) {
+    AccountProxyInterface $current_user,
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $serializer_formats, $logger);
 
     $this->currentUser = $current_user;
@@ -77,12 +77,15 @@ class MakeFeedback extends ResourceBase {
   /**
    * Responds to POST requests.
    *
-   * @param $data
+   * @param array $data
+   *   The data to create a feedback.
+   *
    * @return \Drupal\rest\ModifiedResourceResponse
    *   The HTTP response object.
+   *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function post($data) {
+  public function post(array $data): ModifiedResourceResponse {
 
     // You must to implement the logic of your REST Resource here.
     // Use current user after pass authentication to validate access.
@@ -90,7 +93,7 @@ class MakeFeedback extends ResourceBase {
       throw new AccessDeniedHttpException();
     }
 
-    // 处理图片
+    // 处理图片.
     $images = [];
     if (isset($data['images']) && is_array($data['images'])) {
       foreach ($data['images'] as $image_data) {
@@ -103,10 +106,10 @@ class MakeFeedback extends ResourceBase {
           $directory = file_default_scheme() . '://feedback/feedback/images';
           file_prepare_directory($directory, FILE_MODIFY_PERMISSIONS | FILE_CREATE_DIRECTORY);
 
-          // Determine image type
+          // Determine image type.
           $f = finfo_open();
           $mimeType = finfo_buffer($f, $fileData, FILEINFO_MIME_TYPE);
-          // Generate fileName
+          // Generate fileName.
           $ext = $this->getMimeTypeExtension($mimeType);
 
           $file = file_save_data($fileData, file_default_scheme() . "://" . 'feedback/feedback/images/' . time() . \Drupal::service('uuid')->generate() . $ext, FILE_EXISTS_RENAME);
@@ -119,7 +122,7 @@ class MakeFeedback extends ResourceBase {
       'user_id' => $this->currentUser->id(),
       'title' => $this->currentUser->getDisplayName() . '的反馈',
       'content' => $data['content'],
-      'images' => $images
+      'images' => $images,
     ]);
 
     $feedback->save();
@@ -127,7 +130,9 @@ class MakeFeedback extends ResourceBase {
     return new ModifiedResourceResponse($feedback, 200);
   }
 
-
+  /**
+   * Get file extension by mime type.
+   */
   protected function getMimeTypeExtension($mimeType) {
     $mimeTypes = [
       'image/png' => 'png',
@@ -140,9 +145,11 @@ class MakeFeedback extends ResourceBase {
     ];
     if (isset($mimeTypes[$mimeType])) {
       return '.' . $mimeTypes[$mimeType];
-    } else {
+    }
+    else {
       $split = explode('/', $mimeType);
       return '.' . $split[1];
     }
   }
+
 }
