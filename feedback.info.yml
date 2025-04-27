@@ -4,10 +4,11 @@ description: 'Provides feedback functionality.'
 core_version_requirement: ^10 || ^11
 package: Custom
 dependencies:
-  - basic_auth
-  - rest
-  - serialization
-  - simple_oauth
-  - user
+  - 'drupal:basic_auth'
+  - 'drupal:rest'
+  - 'drupal:serialization'
+  - 'simple_oauth:simple_oauth'
+  - 'drupal:user'
+  - 'drupal:views'
 'interface translation project': feedback
 'interface translation server pattern': translations/%project.%language.po
