@@ -9,3 +9,5 @@ dependencies:
   - serialization
   - simple_oauth
   - user
+'interface translation project': feedback
+'interface translation server pattern': translations/%project.%language.po

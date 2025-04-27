@@ -55,3 +55,15 @@ function template_preprocess_feedback(array &$variables) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
 }
+
+/**
+ * Implements hook_locale_translation_projects_alter()
+ * to alter correct the translation file path.
+ *
+ * @param $projects
+ *
+ * @return void
+ */
+function feedback_locale_translation_projects_alter(&$projects) {
+  $projects['feedback']['info']['interface translation server pattern'] = __DIR__ . '/' . $projects['feedback']['info']['interface translation server pattern'];
+}
