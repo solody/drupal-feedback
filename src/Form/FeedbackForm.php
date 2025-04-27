@@ -34,13 +34,13 @@ class FeedbackForm extends ContentEntityForm {
 
     switch ($status) {
       case SAVED_NEW:
-        $this->messenger->addMessage($this->t('Created the %label Feedback.', [
+        $this->messenger()->addMessage($this->t('Created the %label Feedback.', [
           '%label' => $entity->label(),
         ]));
         break;
 
       default:
-        $this->messenger->addMessage($this->t('Saved the %label Feedback.', [
+        $this->messenger()->addMessage($this->t('Saved the %label Feedback.', [
           '%label' => $entity->label(),
         ]));
     }

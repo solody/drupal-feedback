@@ -14,9 +14,7 @@ class FeedbackViewsData extends EntityViewsData {
    */
   public function getViewsData() {
     $data = parent::getViewsData();
-
-    // Additional information for Views integration, such as table joins, can be
-    // put here.
+    $data['feedback']['user_id']['filter']['id'] = 'entity_reference';
     return $data;
   }
 
